@@ -1,0 +1,188 @@
+[
+ {
+  "run": "bd_only",
+  "tag": "bdfd9_test",
+  "P": 0.891,
+  "R": 0.861,
+  "map50": 0.925,
+  "map5095": 0.455,
+  "per": {
+   "DropStitch": [
+    0.99,
+    0.529
+   ],
+   "Hole": [
+    0.902,
+    0.371
+   ],
+   "Horizontal LineMark": [
+    0.975,
+    0.455
+   ],
+   "Knot": [
+    0.918,
+    0.281
+   ],
+   "Oil Spot": [
+    0.99,
+    0.787
+   ],
+   "Setup": [
+    0.995,
+    0.592
+   ],
+   "Slub": [
+    0.967,
+    0.439
+   ],
+   "Vertical LineMark": [
+    0.796,
+    0.283
+   ],
+   "Yarn Dust": [
+    0.789,
+    0.361
+   ]
+  }
+ },
+ {
+  "run": "merged",
+  "tag": "bdfd9_test",
+  "P": 0.868,
+  "R": 0.864,
+  "map50": 0.878,
+  "map5095": 0.489,
+  "per": {
+   "DropStitch": [
+    0.925,
+    0.489
+   ],
+   "Hole": [
+    0.666,
+    0.304
+   ],
+   "Horizontal LineMark": [
+    0.991,
+    0.507
+   ],
+   "Knot": [
+    0.907,
+    0.31
+   ],
+   "Oil Spot": [
+    0.893,
+    0.801
+   ],
+   "Setup": [
+    0.995,
+    0.647
+   ],
+   "Slub": [
+    0.935,
+    0.554
+   ],
+   "Vertical LineMark": [
+    0.774,
+    0.385
+   ],
+   "Yarn Dust": [
+    0.82,
+    0.4
+   ]
+  }
+ },
+ {
+  "run": "merged",
+  "tag": "fabrid_test",
+  "P": 0.479,
+  "R": 0.39,
+  "map50": 0.346,
+  "map5095": 0.162,
+  "per": {
+   "Hole": [
+    0.51,
+    0.232
+   ],
+   "Needle Mark": [
+    0.247,
+    0.102
+   ],
+   "Missing Yarn": [
+    0.218,
+    0.083
+   ],
+   "Stain": [
+    0.409,
+    0.231
+   ]
+  }
+ },
+ {
+  "run": "merged",
+  "tag": "merged_test",
+  "P": 0.761,
+  "R": 0.706,
+  "map50": 0.719,
+  "map5095": 0.395,
+  "per": {
+   "DropStitch": [
+    0.925,
+    0.489
+   ],
+   "Hole": [
+    0.523,
+    0.235
+   ],
+   "Horizontal LineMark": [
+    0.991,
+    0.507
+   ],
+   "Knot": [
+    0.907,
+    0.31
+   ],
+   "Oil Spot": [
+    0.885,
+    0.797
+   ],
+   "Setup": [
+    0.995,
+    0.647
+   ],
+   "Slub": [
+    0.935,
+    0.554
+   ],
+   "Vertical LineMark": [
+    0.773,
+    0.384
+   ],
+   "Yarn Dust": [
+    0.819,
+    0.399
+   ],
+   "Needle Mark": [
+    0.247,
+    0.102
+   ],
+   "Missing Yarn": [
+    0.218,
+    0.083
+   ],
+   "Stain": [
+    0.409,
+    0.231
+   ]
+  }
+ },
+ {
+  "false_alarm": "bd_only",
+  "n_clean": 88,
+  "n_false": 38
+ },
+ {
+  "false_alarm": "merged",
+  "n_clean": 88,
+  "n_false": 10
+ }
+]

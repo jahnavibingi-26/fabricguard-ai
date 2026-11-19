@@ -1,0 +1,21 @@
+base:
+  model_class: llama3_2
+  checkpoint: /home/jahnavi/llama-3.2-1b/original/consolidated.00.pth
+  params: /home/jahnavi/llama-3.2-1b/original/params.json
+  metadata: '{"get_bos_id":128000, "get_eos_ids":[128009, 128001]}'
+model:
+  use_kv_cache: true
+  use_sdpa_with_kv_cache: true
+  dtype_override: fp32
+backend:
+  xnnpack:
+    enabled: true
+    extended_ops: true
+quantization:
+  qmode: 8da4w
+  group_size: 32
+  embedding_quantize: "8,0"
+export:
+  max_seq_length: 512
+  max_context_length: 512
+  output_name: /home/jahnavi/steel_project/llm/llama32_1b_8da4w.pte

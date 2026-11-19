@@ -1,0 +1,9 @@
+llm/*.pte
+*.zip
+evaluation/kaggle_run1/runs/**/weights/last.pt
+__pycache__/
+*.pyc
+logs/
+logs_*/
+data_clean_test/
+results/runs/*/weights/
