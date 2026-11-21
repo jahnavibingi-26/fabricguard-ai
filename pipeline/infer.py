@@ -180,8 +180,10 @@ class LlamaWorker:
                 return
             image_name, rec = item
             key = (rec["class"], rec["severity"], rec["location"])
+            computed = None
             if key in self.cache:
-                text, secs, source, stats, cached = self.cache[key] + (True,)
+                text, computed, source, stats = self.cache[key]
+                secs, cached = 0.0, True
             else:
                 reply, secs, stats = self._run(rec)
                 ok, clean = sev.check_llama_output(reply)
@@ -189,7 +191,8 @@ class LlamaWorker:
                 self.cache[key] = (text, secs, source, stats)
             line = {"type": "llama", "time": datetime.now().isoformat(timespec="seconds"), "image": image_name,
                     "class": rec["class"], "severity": rec["severity"], "source": source,
-                    "seconds": round(secs, 2), "cached": cached, "text": text, **stats}
+                    "prompt_version": sev.PROMPT_VERSION, "seconds": round(secs, 2), "cached": cached, "computed_seconds": round(computed, 2) if computed else None,
+                    "text": text, **stats}
             with open(self.log_path, "a") as f:
                 f.write(json.dumps(line) + "\n")
             print(f"   [llama:{source}{' cached' if cached else ''} {secs:.1f}s] {image_name}: {text}")
@@ -227,6 +230,7 @@ def main():
     ap.add_argument("--conf", type=float, default=sev.MIN_CONF)
     ap.add_argument("--limit", type=int, default=0, help="only the first N images (0 = all)")
     ap.add_argument("--threads", type=int, default=0, help="onnxruntime CPU threads (0 = default)")
+    ap.add_argument("--delay", type=float, default=0.0, help="seconds to wait after each image (simulates a conveyor for the demo)")
     ap.add_argument("--llama", action="store_true", help="also run Llama advice in the background")
     ap.add_argument("--runner", default=os.path.expanduser("~/executorch/cmake-out/examples/models/llama/llama_main"))
     ap.add_argument("--pte", default=os.path.join(HERE, "..", "llm", "llama32_1b_8da4w.pte"))
@@ -280,6 +284,8 @@ def main():
             print(f"   advice (fixed): {sev.fallback_alert(top)}")
             if worker:
                 worker.submit(name, top)
+        if a.delay:
+            time.sleep(a.delay)
 
     wall = time.perf_counter() - t_start
     if worker:

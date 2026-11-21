@@ -7,3 +7,8 @@ logs/
 logs_*/
 data_clean_test/
 results/runs/*/weights/
+results/
+runs/
+models/merged_best/
+*.bak
+*_old.py

@@ -10,7 +10,7 @@ have NOT been validated by a textile engineer. State this in the report.
 """
 
 # ---------------------------------------------------------------- config
-MIN_CONF = 0.15
+MIN_CONF = 0.15              # detections below this are ignored (chosen on the validation set)
 REJECT_MIN_CONF = 0.50       # below this, a detection can never exceed MEDIUM (-> WARNING)
 AREA_BUMP_1 = 0.05           # box area share of image -> +1 severity level
 AREA_BUMP_2 = 0.20           # box area share of image -> +2 severity levels in total
@@ -20,8 +20,8 @@ MAX_WORDS = 70               # Llama reply shape check
 
 # Per-class REJECT confidence. Classes not listed use REJECT_MIN_CONF. Weak classes (test AP50 below
 # about 0.55) can be given a stricter value so a doubtful detection becomes WARNING, not REJECT.
-REJECT_MIN_CONF_BY_CLASS = {"Hole": 0.7, "Needle Mark": 0.7, "Missing Yarn": 0.7, "Stain": 0.7}
 WEAK_CLASSES = ("Hole", "Needle Mark", "Missing Yarn", "Stain")
+REJECT_MIN_CONF_BY_CLASS = {c: 0.70 for c in WEAK_CLASSES}   # chosen on the validation set
 
 TIERS = ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
 
@@ -145,10 +145,13 @@ def frame_verdict(records):
 
 
 # ---------------------------------------------------------------- Llama side
+PROMPT_VERSION = "v3"   # v1: 33/36 shape checks, v2: 31/36 (all failures were refusals on HIGH/CRITICAL prompts);
+                        # v3: severity and area are NOT sent to Llama (the rules and the screen already show them)
+
 SYSTEM_MSG = ("You are a fabric quality assistant. Use only the facts given. "
               "Reply in exactly two parts: 'Cause:' then 'Action:'. Maximum 60 words.")
 
-_EXAMPLE_USER = ("Defect: Oil Spot. Severity: MEDIUM. Location: upper left. Area: 2.1% of frame. "
+_EXAMPLE_USER = ("Defect: Oil Spot. Location: upper left. "
                  "Known cause: oil or lubricant from machine parts has contaminated the fabric. "
                  "Known action: check lubrication points for leaks, clean the area and isolate the stained section.")
 _EXAMPLE_REPLY = ("Cause: Oil or lubricant from a machine part has reached the fabric near the upper left. "
@@ -162,8 +165,8 @@ def _turn(role, text):
 
 def build_prompt(rec):
     """Llama 3 chat prompt with ONE worked example. No <|begin_of_text|>: the runner adds BOS."""
-    user = (f"Defect: {rec['class']}. Severity: {rec['severity']}. Location: {rec['location']}. "
-            f"Area: {rec['area_pct']}% of frame. Known cause: {rec['cause']}. Known action: {rec['action']}.")
+    user = (f"Defect: {rec['class']}. Location: {rec['location']}. "
+            f"Known cause: {rec['cause']}. Known action: {rec['action']}.")
     return (_turn("system", SYSTEM_MSG) + _turn("user", _EXAMPLE_USER) + _turn("assistant", _EXAMPLE_REPLY)
             + _turn("user", user) + "<|start_header_id|>assistant<|end_header_id|>\n\n")
 
