@@ -1,0 +1,37 @@
+split,class,AP50,AP50-95
+train,DropStitch,0.995,0.695
+train,Hole,0.887,0.562
+train,Horizontal LineMark,0.956,0.589
+train,Knot,0.981,0.566
+train,Oil Spot,0.94,0.695
+train,Setup,0.992,0.776
+train,Slub,0.995,0.642
+train,Vertical LineMark,0.887,0.51
+train,Yarn Dust,0.887,0.463
+train,Needle Mark,0.809,0.538
+train,Missing Yarn,0.849,0.58
+train,Stain,0.907,0.684
+valid,DropStitch,0.94,0.507
+valid,Hole,0.55,0.233
+valid,Horizontal LineMark,0.966,0.565
+valid,Knot,0.956,0.343
+valid,Oil Spot,0.587,0.488
+valid,Setup,0.944,0.605
+valid,Slub,0.925,0.538
+valid,Vertical LineMark,0.815,0.416
+valid,Yarn Dust,0.828,0.377
+valid,Needle Mark,0.276,0.117
+valid,Missing Yarn,0.247,0.105
+valid,Stain,0.464,0.258
+test,DropStitch,0.925,0.489
+test,Hole,0.523,0.235
+test,Horizontal LineMark,0.991,0.507
+test,Knot,0.907,0.31
+test,Oil Spot,0.885,0.797
+test,Setup,0.995,0.647
+test,Slub,0.935,0.554
+test,Vertical LineMark,0.773,0.384
+test,Yarn Dust,0.819,0.399
+test,Needle Mark,0.247,0.102
+test,Missing Yarn,0.218,0.083
+test,Stain,0.409,0.231

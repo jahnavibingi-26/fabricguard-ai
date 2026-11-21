@@ -12,3 +12,7 @@ runs/
 models/merged_best/
 *.bak
 *_old.py
+datasets/
+archive/
+test_results/pipeline_run/annotated/
+test_results/test_predictions/
