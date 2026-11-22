@@ -158,6 +158,9 @@ class LlamaWorker:
             stdout = out.stdout
         except subprocess.TimeoutExpired:
             return None, time.time() - t0, {}
+        except OSError as e:   # runner missing, not executable, or wrong CPU type
+            print(f"   [llama runner could not start: {e}] using fixed advice")
+            return None, time.time() - t0, {}
         marker = "<|start_header_id|>assistant<|end_header_id|>"
         reply = re.sub(r"<\|.*?\|>", "", stdout.split(marker)[-1]).strip() if marker in stdout else ""
         stats = {}
@@ -179,13 +182,17 @@ class LlamaWorker:
             if item is None:
                 return
             image_name, rec = item
-            key = (rec["class"], rec["severity"], rec["location"])
+            key = (rec["class"], rec["location"])   # prompt v3 uses only class + location
             computed = None
             if key in self.cache:
                 text, computed, source, stats = self.cache[key]
                 secs, cached = 0.0, True
             else:
-                reply, secs, stats = self._run(rec)
+                try:
+                    reply, secs, stats = self._run(rec)
+                except Exception as e:
+                    print(f"   [llama error: {e}] using fixed advice")
+                    reply, secs, stats = None, 0.0, {}
                 ok, clean = sev.check_llama_output(reply)
                 text, source, cached = (clean, "llama", False) if ok else (sev.fallback_alert(rec), "fallback", False)
                 self.cache[key] = (text, secs, source, stats)

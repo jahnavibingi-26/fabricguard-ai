@@ -16,3 +16,9 @@ datasets/
 archive/
 test_results/pipeline_run/annotated/
 test_results/test_predictions/
+pipeline/*_old.py
+*.bak
+models/merged_best/
+evaluation/llama_12class_run1_wrong_severity_label.csv
+evaluation/llama_12class.csv
+board_bundle/
