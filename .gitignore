@@ -22,3 +22,4 @@ models/merged_best/
 evaluation/llama_12class_run1_wrong_severity_label.csv
 evaluation/llama_12class.csv
 board_bundle/
+logs_live/
