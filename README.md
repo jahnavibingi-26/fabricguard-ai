@@ -69,7 +69,8 @@ The advice texts are written from common sense and **have not been validated by 
 data_prep/    prep_bdfd9.py (clean BDFD9), merge_fabrics.py (merge with FabriD), check scripts
 training/     training script (see the note under "Reproduce")
 evaluation/   result CSVs, confusion matrices, curves, Llama 12-class results
-pipeline/     infer.py, severity.py, eval_image_level.py, test_llama.py, test_llama_all.py
+pipeline/     infer.py, severity.py, eval_image_level.py, test_llama.py, test_llama_all.py,
+              dashboard.py (operator web page), live.py (camera / video), collect_metrics.py, make_results_table.py
 models/       merged_best.pt, merged_best.onnx (final vision model)
 llm/          export_llama.yaml (the .pte itself is not in the repo, 959 MB)
 project_status.py   read-only status checker
@@ -107,6 +108,43 @@ Evaluation:
 python pipeline/eval_image_level.py --data <fabric_merged>/test --out evaluation/image_level_test.csv --focus 0.15,0.5,0.7
 python pipeline/test_llama_all.py        # 12 classes x 3 cases through llama_main
 ```
+
+## Operator dashboard
+
+`pipeline/dashboard.py` is a local web page for the operator. It uses only the Python standard library and needs no internet,
+so it runs offline on the laptop or on the board. It reads the log folder written by `infer.py` or `live.py`; it never invents data.
+
+```bash
+# terminal 1: the page
+python pipeline/dashboard.py --logs logs_demo --port 8001
+# terminal 2: a demo replay (--delay 4 simulates a conveyor; --conf 0.25 is the demo threshold)
+python pipeline/infer.py --source <folder> --out logs_demo --conf 0.25 --llama --delay 4
+# open http://localhost:8001
+```
+
+What the page shows:
+
+- a large PASS / WARNING / REJECT banner with the defect list (class, severity, confidence, area, location)
+- the fixed advice at once, and the Llama advice when it is ready, with a source tag (`llama`, or `FALLBACK` to the fixed text),
+  the seconds it took, and whether it came from the cache
+- counters: images inspected, PASS / WARNING / REJECT, vision ms and FPS, Llama jobs / fallbacks / mean seconds
+- **Confirm defect** and **False alarm** buttons; each press is appended to `<logs>/feedback.jsonl` with the time, image,
+  system verdict and the operator's label
+- a clickable history of the last 25 alerts (PASS frames from live mode are counted but not listed)
+
+Sharing: `--read-only` disables the operator buttons and makes the server answer 403 to feedback requests. There is no login, and
+the default host is `0.0.0.0` (reachable on the local network), so use `--read-only` for any shared view, or `--host 127.0.0.1`
+to keep it local. Anything shared over the internet is only a view of logged results; inference runs on the device.
+
+Live camera or video: `python pipeline/live.py --source <camera index or video file> --out logs_live --width 640 --height 480 --llama`.
+It inspects only the newest frame (older frames are dropped if inspection is slower than the camera), logs every frame, and
+raises an alert (annotated image plus a Llama job) when a defect class first appears, gets worse, or repeats after `--cooldown`
+seconds. The dashboard shows a live panel while `latest.jpg` is fresh.
+
+Files read from the log folder: `inspections.jsonl`, `llama.jsonl`, `feedback.jsonl`, `annotated/`, `latest.jpg`.
+`--conf` defaults to 0.15; the 500-image test results above were produced at 0.15, the demo replay at 0.25.
+If the Llama runner is missing or cannot start (for example an x86 binary on the board), the advice falls back to the fixed text
+and is tagged `FALLBACK`; the vision pipeline is not affected.
 
 ## Reproduce
 
@@ -167,6 +205,7 @@ Stain 21.3%, Needle Mark 18.8%, Hole 8.7%, all other classes at most 7.1%. With 
 | Vision latency per image (ONNX Runtime) | 24.8 ms mean, 26.5 ms p95, about 40 FPS |
 | Llama, 221-token prompt, 41-token reply | prefill 136 tok/s, decode 47 tok/s |
 | Llama model load / first token / whole call | 1.4 s / 1.6 s / 3.96 s |
+| Vision latency per image while Llama runs at the same time (30-image demo, conf 0.25) | 77.5 ms mean, 250.6 ms p95, about 12.9 FPS |
 
 **On-device (Kria KV260, quad Cortex-A53): TBD**
 
@@ -191,6 +230,14 @@ Stain 21.3%, Needle Mark 18.8%, Hole 8.7%, all other classes at most 7.1%. With 
 - **Overfitting.** Train mAP50 0.924 against test 0.719.
 - **Hard thresholds.** A hole at 0.69 confidence gives WARNING while 0.71 gives REJECT.
 - **Llama's role is small.** The 1B model rewords grounded advice; it does not diagnose. Advice text is not expert-validated.
+- **Printed or patterned fabric.** The model was trained on phone photos of plain knitted fabric. In informal tests with a USB
+  camera, printed patterns and designs were sometimes read as defects. This was not measured; raising `--conf` reduces it but can
+  also hide real defects.
+- **Camera not validated.** The live mode was tried with a 0.3 MP (640x480) USB camera; accuracy on camera video has not been measured.
+- **Llama runs on the laptop only.** No aarch64 build of `llama_main` exists yet, so Llama advice has not run on the KV260 and its
+  timings above are x86 laptop numbers. On the board the advice uses the fixed text with a `FALLBACK` tag.
+- **Llama slows vision.** Vision and Llama share the same CPU, so latency rises while Llama generates (see the Speed table).
+- **Dashboard has no login.** Use `--read-only` and a trusted network when sharing it.
 - **Edge numbers.** See the measurement status at the top of this README.
 
 ## Datasets and credits
