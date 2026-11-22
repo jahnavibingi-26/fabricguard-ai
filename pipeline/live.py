@@ -183,9 +183,18 @@ def main():
             with open(insp_log, "a") as f:
                 f.write(json.dumps(entry) + "\n")
 
-            if is_event(last_alert, top, verdict, now, a.cooldown):
+            is_ev = is_event(last_alert, top, verdict, now, a.cooldown)
+            if is_ev or verdict != "PASS":
+                ann_dir = os.path.join(a.out, "annotated")
+                infer.annotate(img, recs, verdict, os.path.join(ann_dir, name))
+                if idx % 100 == 0:                                   # keep only the newest 600 images
+                    for old_f in sorted(os.listdir(ann_dir))[:-600]:
+                        try:
+                            os.remove(os.path.join(ann_dir, old_f))
+                        except OSError:
+                            pass
+            if is_ev:
                 events += 1
-                infer.annotate(img, recs, verdict, os.path.join(a.out, "annotated", name))
                 print(f"[frame {idx}] {verdict:7} {top['class']} {top['severity']} conf {top['conf']} -> {top['disposition']}")
                 if worker:
                     worker.submit(name, top)

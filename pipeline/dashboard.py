@@ -143,7 +143,8 @@ function render(){
   else if(L){$('llama').textContent=L.text;
     $('lh').textContent=(L.source==='llama'?'Llama advice (on-device, ExecuTorch)':'Llama advice unavailable (showing fixed text)'); lt.textContent='Source: '+(L.source==='llama'?'Llama 3.2 1B (ExecuTorch)':'FALLBACK to fixed text (Llama output unavailable or failed the format check)')+
       ' | '+(L.cached?'reused from an identical earlier alert':L.seconds+' s')+(L.decode_token_per_sec?' | decode '+Math.round(L.decode_token_per_sec)+' tok/s':'')+(L.generated_tokens?' | '+L.generated_tokens+' tokens':'');}
-  else if(s.llama_seen){$('llama').textContent='Generating on-device...'; lt.textContent='The fixed advice above is valid now; the Llama text replaces it when ready.';}
+  else if(s.live && (Date.now()-Date.parse(c.time))<45000){$('llama').textContent='Generating on-device...'; lt.textContent='The fixed advice above is valid now; the Llama text replaces it when ready. Frames that are not alert events get no Llama job.';}
+  else if(s.llama_seen){$('llama').textContent='No Llama job for this frame.'; lt.textContent='Llama runs only for alert events (new defect, worse verdict or after the cooldown). The fixed advice above applies.';}
   else {$('llama').textContent='Not run for this inspection.'; lt.textContent='Start infer.py with --llama to enable it.';}
   const done=!!c.feedback, none=c.verdict==='PASS', ro=!!s.readonly;
   $('b_ok').disabled=done||none||ro; $('b_fa').disabled=done||none||ro;
