@@ -268,3 +268,7 @@ Live run: 561 frames inspected, 510 PASS, 35 WARNING, 16 REJECT. Llama 3.2 1B (E
 | ![Hole](docs/kv260_live/dashboard_hole_reject.png) | ![Stain](docs/kv260_live/dashboard_stain_warning.png) | ![Yarn Dust](docs/kv260_live/dashboard_yarndust_warning.png) |
 
 Sample Llama log: [`docs/kv260_live/live13_llama.jsonl`](docs/kv260_live/live13_llama.jsonl)
+
+### Next steps (second evaluation)
+
+The current board results run the vision model as ONNX (`merged_best.onnx`) on the KV260's CPU. In the second evaluation we plan to run it on the board's DPU (Deep Learning Processing Unit) instead, using the Vitis AI toolchain (quantize, compile to `.xmodel`, run with VART), to improve vision latency and FPS. We expect a gain because the DPU is built for this workload, but we have not measured it yet. The same metrics script will be re-run so the two runs can be compared directly. Power will also be measured, which this evaluation did not do.
