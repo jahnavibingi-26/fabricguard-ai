@@ -272,3 +272,18 @@ Sample Llama log: [`docs/kv260_live/live13_llama.jsonl`](docs/kv260_live/live13_
 ### Next steps (second evaluation)
 
 The current board results run the vision model as ONNX (`merged_best.onnx`) on the KV260's CPU. In the second evaluation we plan to run it on the board's DPU (Deep Learning Processing Unit) instead, using the Vitis AI toolchain (quantize, compile to `.xmodel`, run with VART), to improve vision latency and FPS. We expect a gain because the DPU is built for this workload, but we have not measured it yet. The same metrics script will be re-run so the two runs can be compared directly. Power will also be measured, which this evaluation did not do.
+
+### Measured performance (Kria KV260)
+
+Source: `evaluation/kv260/metrics_board.txt` (isolated benchmark) and the live dashboard session shown above.
+
+| Measurement | Benchmark (30 images, 3 Llama runs) | Live session |
+|---|---|---|
+| Vision latency | 579 ms mean (1.73 FPS) | 1810 ms (0.6 FPS) |
+| Llama advice per alert | 65.7 s mean | 108.4 s mean |
+
+- The live session is slower than the benchmark, probably because vision, the dashboard and Llama run at the same time on one board.
+- Memory: Llama 3.2 1B peaks at about 1.16 GB and the vision process at about 110 MB, on a board with 3.9 GB.
+- Llama reloads the model on every call (about 29 s of the roughly 66 s response time).
+- The fixed advice appears on screen after the vision step (about 0.6 s in the benchmark), well before the Llama advice.
+- Power was not measured.
