@@ -287,3 +287,5 @@ Source: `evaluation/kv260/metrics_board.txt` (isolated benchmark) and the live d
 - Llama reloads the model on every call (about 29 s of the roughly 66 s response time).
 - The fixed advice appears on screen after the vision step (about 0.6 s in the benchmark), well before the Llama advice.
 - Power was not measured.
+
+Full evaluation parameters: [`evaluation/kv260/EVALUATION_PARAMETERS.md`](evaluation/kv260/EVALUATION_PARAMETERS.md)
