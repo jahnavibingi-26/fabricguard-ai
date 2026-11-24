@@ -289,3 +289,104 @@ Source: `evaluation/kv260/metrics_board.txt` (isolated benchmark) and the live d
 - Power was not measured.
 
 Full evaluation parameters: [`evaluation/kv260/EVALUATION_PARAMETERS.md`](evaluation/kv260/EVALUATION_PARAMETERS.md)
+
+---
+
+# Detailed Model Evaluation
+
+The FabricGuard AI vision model was evaluated on a held-out test dataset containing 500 images. Both box-level and image-level evaluations were performed to analyse the model's defect detection performance and the overall inspection capability.
+
+## 1. Overall Box-Level Performance
+
+The ONNX model is used as the primary deployment model because it is executed on the AMD Kria KV260.
+
+| Model / Split | Precision | Recall | F1 Score | mAP@0.5 |
+|---|---:|---:|---:|---:|
+| merged_best.pt - Test | 0.761 | 0.706 | 0.732 | 0.719 |
+| merged_best.onnx - Test | 0.752 | 0.709 | 0.730 | 0.719 |
+| PT - Validation | 0.681 | 0.706 | 0.693 | 0.708 |
+| PT - Training | 0.894 | 0.873 | 0.883 | 0.924 |
+
+The deployed ONNX model achieved a test precision of 0.752, recall of 0.709, F1 score of 0.730 and mAP@0.5 of 0.719.
+
+The precision and recall values are measured at the confidence threshold that produces the best F1 score, rather than the application's deployed confidence threshold of 0.15.
+
+## 2. Per-Class Performance (ONNX Model on Test Set)
+
+The following table presents the class-wise precision, recall and F1 scores for all 12 fabric defect categories.
+
+| Defect Class | Precision | Recall | F1 Score |
+|---|---:|---:|---:|
+| Horizontal LineMark | 0.959 | 1.000 | 0.979 |
+| Setup | 0.901 | 1.000 | 0.948 |
+| Oil Spot | 0.962 | 0.929 | 0.945 |
+| Slub | 0.945 | 0.933 | 0.939 |
+| DropStitch | 0.944 | 0.929 | 0.936 |
+| Knot | 0.832 | 0.867 | 0.849 |
+| Vertical LineMark | 0.766 | 0.718 | 0.741 |
+| Yarn Dust | 0.708 | 0.731 | 0.719 |
+| Hole | 0.632 | 0.558 | 0.593 |
+| Stain | 0.532 | 0.384 | 0.446 |
+| Needle Mark | 0.476 | 0.302 | 0.370 |
+| Missing Yarn | 0.360 | 0.153 | 0.215 |
+
+**Mean per-class F1 score: 0.723**
+
+The mean per-class F1 score differs from the overall F1 score of 0.730 because they use different averaging methods.
+
+The model demonstrates strong performance for Horizontal LineMark, Setup, Oil Spot, Slub and DropStitch. Lower performance is observed for Missing Yarn, Needle Mark and Stain, indicating opportunities for improvement through additional training samples and dataset balancing.
+
+## 3. Image-Level Performance
+
+Image-level evaluation considers the complete inspection system and determines whether an image containing defects is flagged or a clean image is correctly passed.
+
+The evaluation was performed on the 500-image test dataset using the deployed application settings: confidence threshold 0.15 and weak-class REJECT threshold 0.7.
+
+| Metric | Result |
+|---|---:|
+| Defect images correctly flagged | 359 |
+| Defect images missed | 53 |
+| Clean images incorrectly flagged | 16 |
+| Clean images correctly passed | 72 |
+| Image-level Precision | 0.957 |
+| Image-level Recall | 0.871 |
+| Image-level F1 Score | 0.912 |
+| Clean images correctly passed | 81.8% |
+
+The image-level metrics are calculated as follows:
+
+- Precision = 359 / 375 = 0.957
+- Recall = 359 / 412 = 0.871
+- F1 Score = 2 x Precision x Recall / (Precision + Recall) = 0.912
+
+## 4. Dataset-Wise Recall
+
+| Dataset Source | Defect Images | Missed Images | Recall |
+|---|---:|---:|---:|
+| BDFD9 | 142 | 2 | 0.986 |
+| FabriD | 270 | 51 | 0.811 |
+
+The model performs better on BDFD9 than on FabriD, highlighting the need for improved generalisation across different fabric patterns and defect appearances.
+
+## 5. Strict Image-Level Evaluation
+
+A stricter evaluation was also performed in which the top detected defect class was required to match the actual defect class.
+
+| Metric | Result |
+|---|---:|
+| Precision | 0.893 |
+| Recall | 0.813 |
+| F1 Score | 0.851 |
+
+## 6. Evaluation Observations
+
+- The deployed ONNX model achieves an mAP@0.5 of 0.719.
+- The mean per-class F1 score is 0.723.
+- Horizontal LineMark achieves the highest F1 score of 0.979.
+- Missing Yarn has the lowest F1 score of 0.215.
+- Image-level inspection achieves an F1 score of 0.912 under the deployed application settings.
+- Dataset-wise evaluation shows stronger performance on BDFD9 than FabriD.
+
+These results demonstrate the ability of FabricGuard AI to perform multi-class fabric defect detection and severity-based quality inspection while identifying areas for further model improvement.
+
+**Evaluation Note:** Box-level and image-level metrics represent different evaluation tasks and use different confidence settings. They should be interpreted separately.
