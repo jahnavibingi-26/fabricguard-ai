@@ -1,0 +1,72 @@
+{
+ "label": "board",
+ "prompt_version": "v3",
+ "mem_total_mb": 3930,
+ "threads": "default",
+ "model": "merged_best.onnx",
+ "vision": {
+  "images": 30,
+  "mean_ms": 579.4,
+  "median_ms": 577.9,
+  "p95_ms": 588.4,
+  "fps": 1.73,
+  "mean_pre_ms": 24.9,
+  "mean_model_ms": 550.3,
+  "mean_post_ms": 4.0,
+  "peak_rss_mb": 110.5,
+  "power": null
+ },
+ "llama": {
+  "runs": [
+   {
+    "class": "Hole",
+    "ok": true,
+    "wall_s": 66.7,
+    "load_s": 28.97,
+    "ttft_s": 28.68,
+    "gen_s": 8.13,
+    "prefill_tps": 6.7,
+    "decode_tps": 5.0,
+    "prompt_tokens": 192,
+    "generated_tokens": 41
+   },
+   {
+    "class": "Stain",
+    "ok": true,
+    "wall_s": 65.98,
+    "load_s": 28.98,
+    "ttft_s": 28.54,
+    "gen_s": 7.55,
+    "prefill_tps": 6.6,
+    "decode_tps": 5.0,
+    "prompt_tokens": 188,
+    "generated_tokens": 38
+   },
+   {
+    "class": "Knot",
+    "ok": true,
+    "wall_s": 64.47,
+    "load_s": 29.01,
+    "ttft_s": 28.58,
+    "gen_s": 5.96,
+    "prefill_tps": 6.5,
+    "decode_tps": 5.0,
+    "prompt_tokens": 187,
+    "generated_tokens": 30
+   }
+  ],
+  "n": 3,
+  "format_ok": 3,
+  "mean_load_s": 28.99,
+  "mean_ttft_s": 28.6,
+  "mean_gen_s": 7.21,
+  "mean_prefill_tps": 6.6,
+  "mean_decode_tps": 5.0,
+  "mean_prompt_tokens": 189,
+  "mean_generated_tokens": 36.33,
+  "mean_wall_s": 65.72,
+  "max_wall_s": 66.7,
+  "peak_rss_mb_llama_process": 1159.2,
+  "power": null
+ }
+}

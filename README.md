@@ -258,3 +258,13 @@ Most camera frames are dropped because inspection is slower than the camera; the
 - **Llama 3.2** is used under the Llama 3.2 Community License. The weights and the exported `.pte` are not included.
 - **YOLOv8 (Ultralytics)** is licensed under AGPL-3.0, which is why this repository is released under the same licence.
 - **ONNX Runtime, ExecuTorch, XNNPACK, NumPy and Pillow** are used under their own open-source licences.
+
+## On-device demo (Kria KV260)
+
+Live run: 561 frames inspected, 510 PASS, 35 WARNING, 16 REJECT. Llama 3.2 1B (ExecuTorch) generated advice for 11 alerts on the board.
+
+| Hole (REJECT) | Stain (WARNING) | Yarn Dust (WARNING) |
+|---|---|---|
+| ![Hole](docs/kv260_live/dashboard_hole_reject.png) | ![Stain](docs/kv260_live/dashboard_stain_warning.png) | ![Yarn Dust](docs/kv260_live/dashboard_yarndust_warning.png) |
+
+Sample Llama log: [`docs/kv260_live/live13_llama.jsonl`](docs/kv260_live/live13_llama.jsonl)

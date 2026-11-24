@@ -1,0 +1,17 @@
+VISION: 30 images from ../samples
+LLAMA: 3 runs
+  Llama run 1/3 Hole: wall 66.7 s, first token 28.68 s, decode 5.0 tok/s, format ok=True
+  Llama run 2/3 Stain: wall 65.98 s, first token 28.54 s, decode 5.0 tok/s, format ok=True
+  Llama run 3/3 Knot: wall 64.47 s, first token 28.58 s, decode 5.0 tok/s, format ok=True
+
+===== REPORT TABLE (board) =====
+Vision latency per image : mean 579.4 ms, median 577.9 ms, p95 588.4 ms (pre 24.9 + model 550.3 + post 4.0)
+Vision FPS               : 1.73
+Memory                   : total 3930 MB, vision process peak 110.5 MB, llama_main peak 1159.2 MB
+Power                    : idle not measured | vision not measured | Llama not measured
+Llama time to first token: 28.6 s (model load 28.99 s on top, reloaded on every call)
+Llama tokens per second  : prefill 6.6, decode 5.0 (189 prompt tokens, 36.33 generated)
+Llama total response time: mean 65.72 s, max 66.7 s per alert (format ok 3/3)
+Frame to Llama advice    : about 66.3 s (the fixed advice is on screen after 579.4 ms)
+
+Saved /home/root/board_bundle/pipeline/../evaluation/metrics_board.json
